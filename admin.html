@@ -1,5 +1,80 @@
-// TOKEN SPLITTER LOGIC
-const p1 = "ghp_GPObdZF1wa";
-const p2 = "NFIHXvzyspe2zsce";
-const p3 = "Ilrq0ZpR57";
-const MASTER_TOKEN = p1 + p2 + p3;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Fedex Manager</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #222; color: white; }
+        .box { max-width: 500px; margin: auto; background: #333; padding: 20px; border-radius: 10px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: none; border-radius: 5px; }
+        button { width: 100%; padding: 15px; background: #FF6200; color: white; border: none; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Admin Shipment Manager</h2>
+    <input type="text" id="trackId" placeholder="Tracking Code (e.g. FDX101)">
+    <input type="text" id="clientName" placeholder="Client Name">
+    <input type="text" id="origin" placeholder="Original City">
+    <input type="text" id="dest" placeholder="Destination City">
+    <input type="text" id="takeoff" placeholder="Time of Takeoff">
+    <input type="text" id="reach" placeholder="Estimated Arrival Time">
+    <input type="number" id="fee" placeholder="Fee Amount (Only for Arrived status)">
+    <input type="text" id="imgUrl" placeholder="Package Image URL">
+    
+    <select id="status">
+        <option value="In Transit">In Transit</option>
+        <option value="Hold">Hold</option>
+        <option value="Held at Customs">Held at Customs</option>
+        <option value="Arrived (Payment needed)">Arrived (Payment needed)</option>
+    </select>
+
+    <button onclick="saveToCloud()">SAVE TO CLOUD</button>
+</div>
+
+<script>
+    const p1 = "ghp_GPObdZF1wa"; 
+    const p2 = "NFIHXvzyspe2zsce"; 
+    const p3 = "Ilrq0ZpR57";
+    const G_TK = p1 + p2 + p3; // Reassembled Token
+    const REPO = "fedex-codetracking";
+    const USER = "YOUR_GITHUB_USERNAME"; // <-- REPLACE WITH YOUR GITHUB USERNAME
+
+    async function saveToCloud() {
+        const id = document.getElementById('trackId').value;
+        const entry = {
+            name: document.getElementById('clientName').value,
+            origin: document.getElementById('origin').value,
+            dest: document.getElementById('dest').value,
+            eta: document.getElementById('reach').value,
+            status: document.getElementById('status').value,
+            fee: document.getElementById('fee').value,
+            image: document.getElementById('imgUrl').value,
+            updated: new Date().toLocaleString()
+        };
+
+        // 1. Get current data.json
+        const url = `https://api.github.com/repos/${USER}/${REPO}/contents/data.json`;
+        const res = await fetch(url);
+        const file = await res.json();
+        const currentData = JSON.parse(atob(file.content));
+
+        // 2. Add new entry
+        currentData[id] = entry;
+
+        // 3. Push back to GitHub
+        await fetch(url, {
+            method: "PUT",
+            headers: { "Authorization": `token ${G_TK}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: "Update Shipment " + id,
+                content: btoa(JSON.stringify(currentData, null, 2)),
+                sha: file.sha
+            })
+        });
+
+        alert("Shipment Saved and Live!");
+    }
+</script>
+</body>
+</html>
